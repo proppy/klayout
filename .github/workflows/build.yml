@@ -102,5 +102,4 @@ jobs:
         name: ${{ env.TAG }}
         tag_name: ${{ env.TAG }}
         files: |
-          dist/*
-
+          artifact/*
