@@ -93,7 +93,7 @@ jobs:
     - run: |
         git config --local user.name klayout@bot
         git config --local user.email klayout@bot
-        TAG=$(git describe --tags)
+        TAG=$(git describe --tags --exclude '*-g*')
         git tag $TAG
         git push origin "HEAD:refs/tags/$TAG"
         echo "TAG=$TAG" >> $GITHUB_ENV
