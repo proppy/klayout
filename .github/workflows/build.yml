@@ -78,33 +78,29 @@ jobs:
       with:
         path: dist/*.tar.gz
      
-  upload_to_test_pypy:
-    needs: [build, make_sdist]
+  release:
+    needs:
+    - build
+    - make_sdist
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/checkout@v2
       with:
-        name: artifact
-        path: dist
+        fetch-depth: 0
 
-    - uses: pypa/gh-action-pypi-publish@v1.4.2
-      continue-on-error: true   # might fail if we don't bump the version
+    - uses: actions/download-artifact@v3
+      
+    - run: |
+        git config --local user.name klayout@bot
+        git config --local user.email klayout@bot
+        TAG=$(git describe --tags)
+        git tag $TAG
+        git push origin "HEAD:refs/tags/$TAG"
+        echo "TAG=$TAG" >> $GITHUB_ENV
+    - uses: softprops/action-gh-release@v1
       with:
-        user: __token__
-        password: ${{ secrets.test_pypi_password }}
-        repository_url: https://test.pypi.org/legacy/
+        name: ${{ env.TAG }}
+        tag_name: ${{ env.TAG }}
+        files: |
+          dist/*
 
-  upload_to_pypi:
-    needs: [build, make_sdist]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-    steps:
-    - uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: dist
-
-    - uses: pypa/gh-action-pypi-publish@v1.4.2
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_password }}
