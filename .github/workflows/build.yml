@@ -20,12 +20,8 @@ jobs:
       max-parallel: 12
       matrix:
         include:
-          - os: "macos-latest"
-            cibuild: "*macosx*"
           - os: "ubuntu-latest"
             cibuild: "*manylinux*"
-          - os: "ubuntu-latest"
-            cibuild: "*musllinux*"
     steps:
       - uses: hmarr/debug-action@v2
       - name: Cancel Workflow Action
